@@ -47,9 +47,18 @@ func checkArgs(args []string) {
 }
 
 func dispValidation(valUnits ...validator) {
+	//format and display validation results
+	dispBorder(`=`, borderLength)
+	var txt string
 	for _, unit := range valUnits {
-		fmt.Println(unit.Validate())
+		if unit.Validate() {
+			txt = "Status: PASS"
+		} else {
+			txt = "Status: FAIL"
+		}
 		fmt.Println(unit.GetMsg())
+		dispMsg(txt, borderLength)
+		dispBorder(`=`, borderLength)
 	}
 }
 
