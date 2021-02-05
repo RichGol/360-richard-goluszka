@@ -1,4 +1,4 @@
-package dircheck
+package directorychk
 
 import (
 	"io/ioutil"
@@ -11,11 +11,7 @@ type DirChecker struct {
 	Path, Msg string
 }
 
-type validator interface {
-	validate() bool
-}
-
-//Validate ... implementation of Validator interface by DirChecker
+//Validate ... implements validator interface in val.go
 func (dc *DirChecker) Validate() bool {
 	//open directory and get files
 	files, err := ioutil.ReadDir(dc.Path)
@@ -27,16 +23,18 @@ func (dc *DirChecker) Validate() bool {
 	//validate each file for compliance
 	for _, fi := range files {
 		tmpName := strings.ToUpper(fi.Name())
-		if fi.IsDir() {
-			//validate subdirectories
+		if fi.IsDir() { //validate subdirectories
+			tmpStr := dc.Path
 			dc.Path = dc.Path + string(os.PathSeparator) + fi.Name()
+			dc.Msg = dc.Msg + `Checking: ` + dc.Path + "\n"
 			if dc.Validate() {
+				dc.Path = tmpStr
 				continue
 			}
 			return false
 		} else if strings.Contains("LICENSE README.MD", tmpName) ||
-			strings.Contains(tmpName, ".GO") {
-			//file complies
+			strings.Contains(tmpName, ".GO") { //file complies
+			dc.Msg = dc.Msg + `Checking: ` + fi.Name() + "\n"
 			continue
 		}
 		//file fails
@@ -45,4 +43,9 @@ func (dc *DirChecker) Validate() bool {
 	}
 	//project complies
 	return true
+}
+
+//GetMsg ... implements validator interface in val.go
+func (dc *DirChecker) GetMsg() string {
+	return dc.Msg
 }
