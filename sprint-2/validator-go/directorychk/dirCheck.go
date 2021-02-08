@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//DirChecker ... path, msg string
+//DirChecker ... Path string
 type DirChecker struct {
 	Path, msg string
 }
@@ -33,12 +33,14 @@ func (dc *DirChecker) Validate() bool {
 			}
 			return false
 		} else if strings.Contains("LICENSE README.MD", tmpName) ||
-			strings.Contains(tmpName, ".GO") { //file complies
-			dc.msg = dc.msg + `Checking: ` + fi.Name() + "\n"
+			strings.Contains(tmpName, ".GO") || strings.Contains(tmpName, ".MOD") {
+			//file complies
+			dc.msg = dc.msg + `Checking: ` + dc.Path + string(os.PathSeparator) + fi.Name() + "\n"
 			continue
 		}
 		//file fails
-		dc.msg = `Directory contains an invalid file: ` + fi.Name()
+		dc.msg = dc.msg + `Directory contains an invalid file: ` + dc.Path +
+			string(os.PathSeparator) + fi.Name()
 		return false
 	}
 	//project complies

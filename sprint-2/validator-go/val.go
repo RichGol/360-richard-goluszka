@@ -3,12 +3,14 @@ package main
 import (
 	"360-richard-goluszka/sprint-2/validator-go/directorychk"
 	"360-richard-goluszka/sprint-2/validator-go/licensechk"
+	"360-richard-goluszka/sprint-2/validator-go/linefmtchk"
 	"fmt"
 	"os"
 	"strings"
 )
 
-const borderLength = 80
+const borderChar = `=`
+const borderLen = 80
 
 type validator interface {
 	Validate() bool
@@ -31,34 +33,18 @@ func dispMsg(msg string, borderLength int) {
 //handle command-line arguments passed to executable during call
 func checkArgs(args []string) {
 	if strings.ToLower(args[0]) == `help` { //handle cli 'help' argument and exit
-		dispBorder(`=`, borderLength)
+		dispBorder(borderChar, borderLen)
 		dispMsg(`val.go -- written to automate validation of coding standards`,
-			borderLength)
-		dispMsg("use \u2018val help\u2019 to display this information again", borderLength)
-		dispBorder(`=`, borderLength)
+			borderLen)
+		dispMsg("use \u2018val help\u2019 to display this information again", borderLen)
+		dispBorder(borderChar, borderLen)
 		os.Exit(0)
 	} else { //handle other cli arguments and exit
-		dispBorder(`=`, borderLength)
-		dispMsg("Invalid argument: \u2018"+args[0]+"\u2019", borderLength)
-		dispMsg("use \u2018val help\u2019 to find valid arguments", borderLength)
-		dispBorder(`=`, borderLength)
+		dispBorder(borderChar, borderLen)
+		dispMsg("Invalid argument: \u2018"+args[0]+"\u2019", borderLen)
+		dispMsg("use \u2018val help\u2019 to find valid arguments", borderLen)
+		dispBorder(borderChar, borderLen)
 		os.Exit(0)
-	}
-}
-
-func dispValidation(valUnits ...validator) {
-	//format and display validation results
-	dispBorder(`=`, borderLength)
-	var txt string
-	for _, unit := range valUnits {
-		if unit.Validate() {
-			txt = "Status: PASS"
-		} else {
-			txt = "Status: FAIL"
-		}
-		fmt.Println(unit.GetMsg())
-		dispMsg(txt, borderLength)
-		dispBorder(`=`, borderLength)
 	}
 }
 
@@ -69,9 +55,25 @@ func main() {
 		checkArgs(args)
 	}
 
-	//create and call each validation struct polymorphically
-	dc := directorychk.DirChecker{Path: `.`}
-	lc := licensechk.LicenseChecker{Path: `.`}
-	dispValidation(&dc, &lc)
+	//create & associate each validator struct with a descriptive string
+	valUnitMap := map[string]validator{
+		`Directory Contents Check`: &directorychk.DirChecker{Path: `.`},
+		`License Contents Check`:   &licensechk.LicenseChecker{Path: `.`},
+		`Line Feed Endings Check`:  &linefmtchk.LineFmtChecker{Path: `.`},
+	}
 
+	//run and display the output of each validator struct
+	status := ``
+	dispBorder(borderChar, borderLen)
+	for label, unit := range valUnitMap {
+		if unit.Validate() {
+			status = `Status: PASS`
+		} else {
+			status = `Status: FAIL`
+		}
+		dispMsg(label, borderLen)
+		fmt.Println(unit.GetMsg())
+		dispMsg(status, borderLen)
+		dispBorder(borderChar, borderLen)
+	}
 }

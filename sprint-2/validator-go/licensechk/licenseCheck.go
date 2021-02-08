@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//LicenseChecker ... struct
+//LicenseChecker ... Path string
 type LicenseChecker struct {
 	Path, msg, fileLoc string
 }
