@@ -20,13 +20,13 @@ func (dc *DirChecker) Validate() bool {
 		return false
 	}
 
-	//validate each file for compliance
+	//step through each entry in dc.Path directory
 	for _, fi := range files {
 		tmpName := strings.ToUpper(fi.Name())
 		if fi.IsDir() { //validate subdirectories
 			tmpStr := dc.Path
-			dc.Path = dc.Path + string(os.PathSeparator) + fi.Name()
-			dc.msg = dc.msg + `Checking: ` + dc.Path + "\n"
+			dc.Path += string(os.PathSeparator) + fi.Name()
+			dc.msg += `Checking: ` + dc.Path + "\n"
 			if dc.Validate() {
 				dc.Path = tmpStr
 				continue
@@ -34,20 +34,17 @@ func (dc *DirChecker) Validate() bool {
 			return false
 		} else if strings.Contains("LICENSE README.MD", tmpName) ||
 			strings.Contains(tmpName, ".GO") || strings.Contains(tmpName, ".MOD") {
-			//file complies
-			dc.msg = dc.msg + `Checking: ` + dc.Path + string(os.PathSeparator) + fi.Name() + "\n"
-			continue
+			dc.msg += `Checking: ` + dc.Path + string(os.PathSeparator) + fi.Name() + "\n"
+			continue //file pass
 		}
-		//file fails
-		dc.msg = dc.msg + `Directory contains an invalid file: ` + dc.Path +
-			string(os.PathSeparator) + fi.Name()
-		return false
+		dc.msg += `Directory contains an invalid file: ` + dc.Path + string(os.PathSeparator) +
+			fi.Name()
+		return false //file fail
 	}
-	//project complies
-	return true
+	return true //all files pass
 }
 
 //GetMsg ... implements validator interface in val.go
 func (dc *DirChecker) GetMsg() string {
-	return dc.msg
+	return strings.TrimSuffix(dc.msg, "\n")
 }
