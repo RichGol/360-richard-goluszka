@@ -8,9 +8,10 @@ import (
 
 //LicenseChecker ... Path string
 type LicenseChecker struct {
-	Path, filePath string
-	msg, issues    string
-	issueCt        int
+	Path        string
+	filePath    string
+	msg, issues string
+	issueCt     int
 }
 
 //Validate ... implements validator interface in val.go
@@ -38,17 +39,17 @@ func (lc *LicenseChecker) Validate() bool {
 		lc.msg += `Failed to open file: ` + lc.filePath + "\n"
 		return false
 	}
+	lc.msg += `Checking: ` + lc.filePath + "\n"
 
 	//validate contents
-	lc.msg += `Checking: ` + lc.filePath + "\n"
-	str := string(bytes) //TODO: Modify to check by line
+	str := string(bytes)
 	if strings.Contains(str, `GNU`) || strings.Contains(str, `MIT`) ||
 		strings.Contains(strings.ToUpper(str), `ALL RIGHTS RESERVED`) {
 		return true //file pass
 	}
 	lc.issueCt++
-	lc.issues += `LICENSE File Invalid: ` + lc.filePath + "\n"
-	lc.issues += `  --does not contain "GNU", "MIT", or "all rights reserved"` + "\n"
+	lc.issues += `Issue: ` + lc.filePath +
+		" does not mention GNU, MIT, or all rights reserved\n"
 	return false //file fail
 }
 

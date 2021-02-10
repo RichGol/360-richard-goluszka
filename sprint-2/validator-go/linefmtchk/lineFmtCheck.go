@@ -10,9 +10,10 @@ import (
 
 //LineFmtChecker ... Path string
 type LineFmtChecker struct {
-	Path, msg string
-	issues    string
-	issueCt   int
+	Path    string
+	msg     string
+	issues  string
+	issueCt int
 }
 
 //Validate ... implements validator interface in val.go
@@ -23,6 +24,9 @@ func (lfc *LineFmtChecker) Validate() bool {
 		lfc.msg += `Failed to open directory: ` + lfc.Path + "\n"
 		return false
 	}
+
+	//create regular expression to validate tab requirement
+	regExpr := regexp.MustCompile(`^(    )+[a-z|A-Z]+`)
 
 	status := true
 	tmpPath := ``
@@ -41,6 +45,7 @@ func (lfc *LineFmtChecker) Validate() bool {
 			lfc.Path = tmpPath
 			continue
 		}
+
 		//open file
 		content, err := ioutil.ReadFile(filePath)
 		if err != nil {
@@ -48,17 +53,14 @@ func (lfc *LineFmtChecker) Validate() bool {
 			return false
 		}
 
-		//create regex to validate tab requirement
-		regExpr := regexp.MustCompile(`^(    )+[a-z|A-Z]+`)
-
-		//check each file by line for "\r" and space-indenting
+		//check each line for "\r" and space-indenting
 		for lineNum, line := range strings.Split(string(content), "\n") {
 			if strings.Contains(line, "\r") {
-				lfc.issues = fmt.Sprintf("Line %d in File: %s\twrong line feeds\n", lineNum,
-					filePath)
+				lfc.issues += fmt.Sprintf("Issue: %s has wrong line feeds (line %d)\n", filePath,
+					lineNum+1)
 			} else if regExpr.MatchString(line) {
-				lfc.issues += fmt.Sprintf("Line %d in File: %s\tspace-indentation\n", lineNum,
-					filePath)
+				lfc.issues += fmt.Sprintf("Issue: %s has space-indentation (line %d)\n", filePath,
+					lineNum+1)
 			} else {
 				continue //file pass
 			}

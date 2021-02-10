@@ -43,13 +43,9 @@ func dispMsgs(borderLength int, messages ...string) {
 func checkArgs(args []string) bool {
 	if strings.EqualFold(args[0], `help`) {
 		dispBorder(borderChar, borderLen)
-		dispMsgs(borderLen, `val.go -- validates code compliance with the following standards:`,
-			`1. Only files required to compile/execute plus README and LICENSE are included`,
-			`4. A LICENSE file included that is MIT, GNU GPL, or all rights reserved`,
-			`6. Tabs are used for indenting and line feeds (\n) mark the end of lines`,
-			`13. All files are UTF-8 compatible text files`, ``,
+		dispMsgs(borderLen, `val.go -- validates code compliance with standards 1, 4, 6, and 13`,
 			"\u2018val\u2019 reports the number of errors and PASS/FAIL status",
-			"\u2018val detail\u2019 shows files checked and error locations",
+			"\u2018val detail\u2019 shows the files checked and any error locations",
 			"\u2018val help\u2019 displays this information again")
 		dispBorder(borderChar, borderLen)
 		os.Exit(0)
@@ -75,12 +71,17 @@ func main() {
 		detailMode = checkArgs(args)
 	}
 
-	//create a slice to hold the validation structs
+	//get project path from user
+	var path string
+	fmt.Print(`Enter Path to Project: `)
+	fmt.Scanln(&path)
+
+	//create a slice to hold coding standard structs
 	valUnits := []validator{
-		&directorychk.DirChecker{Path: `.`},
-		&licensechk.LicenseChecker{Path: `.`},
-		&linefmtchk.LineFmtChecker{Path: `.`},
-		&utf8chk.UTF8Checker{Path: `.`},
+		&directorychk.DirChecker{Path: path},
+		&licensechk.LicenseChecker{Path: path},
+		&linefmtchk.LineFmtChecker{Path: path},
+		&utf8chk.UTF8Checker{Path: path},
 	}
 
 	//create a slice to hold coding standard labels (for UI)
@@ -88,20 +89,20 @@ func main() {
 		`Directory Contents Check`,
 		`License Contents Check`,
 		`Line Feed and Tabs Check`,
-		`UTF8 Compatability Check`,
+		`UTF8 Compatibility Check`,
 	}
 
 	//create a slice to hold coding standard descriptions (for UI)
 	valDescs := []string{
-		`Ensures files are LICENSE, README.md, or end with .go or .mod`,
-		`LICENSE file mentions MIT, GNU, or all rights reserved`,
-		`File lines do not end in \n and code is not space-indented`,
-		`File lines contain only valid UTF-8 characters`,
+		`Only files required to compile/execute, README.md, and LICENSE are included`,
+		`The LICENSE file must specify a MIT, GNU GPL, or all rights reserved license`,
+		`Indentation is tab-based and only line feeds (\n) mark the end of lines`,
+		`All included files are UTF-8 compatible text files`,
 	}
 
-	//run each validator and display output polymorphically
 	status := ``
 	dispBorder(borderChar, borderLen)
+	//run each validator and display output polymorphically
 	for index, unit := range valUnits {
 		if unit.Validate() {
 			status = `Status: PASS`
@@ -111,8 +112,10 @@ func main() {
 		status += fmt.Sprint("\tIssue Count: ", unit.GetIssueCt())
 		dispMsgs(borderLen, valLabels[index], valDescs[index], ``)
 		if detailMode { //output for `detail` argument
-			fmt.Println(unit.GetMsg())
-			fmt.Println(unit.GetIssues())
+			fmt.Println(unit.GetMsg() + "\n")
+		}
+		if detailMode && unit.GetIssueCt() > 0 {
+			fmt.Println(unit.GetIssues() + "\n")
 		}
 		dispMsg(status, borderLen)
 		dispBorder(borderChar, borderLen)

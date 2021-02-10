@@ -10,9 +10,10 @@ import (
 
 //UTF8Checker .. Path string
 type UTF8Checker struct {
-	Path, msg string
-	issues    string
-	issueCt   int
+	Path    string
+	msg     string
+	issues  string
+	issueCt int
 }
 
 //Validate ... implements validator interface in val.go
@@ -48,14 +49,13 @@ func (uc *UTF8Checker) Validate() bool {
 			return false
 		}
 
-		//Check for utf8 validity per-line
+		//Check each line for UTF-8 validity
 		for lineNum, line := range strings.Split(string(content), "\n") {
-			if utf8.ValidString(line) {
-				continue
+			if !utf8.ValidString(line) {
+				uc.issues += fmt.Sprintf("Line %d in File: %s\tnon-utf8 text\n", lineNum, line)
+				uc.issueCt++
+				status = false //file fail
 			}
-			uc.issues += fmt.Sprintf("Line %d in File: %s\tnon-utf8 text\n", lineNum, line)
-			uc.issueCt++
-			status = false
 		}
 	}
 	return status

@@ -8,9 +8,10 @@ import (
 
 //DirChecker ... Path string
 type DirChecker struct {
-	Path, msg string
-	issues    string
-	issueCt   int
+	Path    string
+	msg     string
+	issues  string
+	issueCt int
 }
 
 //Validate ... implements validator interface in val.go
@@ -41,10 +42,12 @@ func (dc *DirChecker) Validate() bool {
 		} else if strings.Contains("LICENSE README.MD", fileName) ||
 			strings.Contains(fileName, ".GO") || strings.Contains(fileName, ".MOD") {
 			continue //file pass
+		} else {
+			dc.issues += `Issue: ` + dc.Path + string(os.PathSeparator) + fi.Name() +
+				" is non-project file\n"
+			dc.issueCt++ //file fail
+			status = false
 		}
-		dc.issues += `Non-Project File: ` + dc.Path + string(os.PathSeparator) + fi.Name() + "\n"
-		dc.issueCt++ //file fail
-		status = false
 	}
 	return status
 }
