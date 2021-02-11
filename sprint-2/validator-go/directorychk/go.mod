@@ -1,3 +1,3 @@
-module example.com/directorychk
+module lewis.education/directorychk
 
 go 1.15
