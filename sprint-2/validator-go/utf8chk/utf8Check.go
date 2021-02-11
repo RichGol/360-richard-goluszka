@@ -41,7 +41,10 @@ func (uc *UTF8Checker) Validate() bool {
 			}
 			uc.Path = tmpPath
 			continue
+		} else if strings.Contains(filePath, `.exe`) {
+			continue //skip executables
 		}
+
 		//open file
 		content, err := ioutil.ReadFile(filePath)
 		if err != nil {

@@ -5,6 +5,7 @@ import (
 	"360-richard-goluszka/sprint-2/validator-go/licensechk"
 	"360-richard-goluszka/sprint-2/validator-go/linefmtchk"
 	"360-richard-goluszka/sprint-2/validator-go/utf8chk"
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
@@ -71,10 +72,11 @@ func main() {
 		detailMode = checkArgs(args)
 	}
 
-	//get project path from user
-	var path string
-	fmt.Print(`Enter Path to Project: `)
-	fmt.Scanln(&path)
+	//Get path from user
+	fmt.Print(`Enter path to project: `)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	path := scanner.Text()
 
 	//create a slice to hold coding standard structs
 	valUnits := []validator{
@@ -101,8 +103,8 @@ func main() {
 	}
 
 	status := ``
-	dispBorder(borderChar, borderLen)
 	//run each validator and display output polymorphically
+	dispBorder(borderChar, borderLen)
 	for index, unit := range valUnits {
 		if unit.Validate() {
 			status = `Status: PASS`

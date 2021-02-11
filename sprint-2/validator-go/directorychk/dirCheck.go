@@ -39,6 +39,8 @@ func (dc *DirChecker) Validate() bool {
 			}
 			dc.Path = tmpPath
 			continue
+		} else if strings.Contains(fileName, `.EXE`) {
+			continue
 		} else if strings.Contains("LICENSE README.MD", fileName) ||
 			strings.Contains(fileName, ".GO") || strings.Contains(fileName, ".MOD") {
 			continue //file pass

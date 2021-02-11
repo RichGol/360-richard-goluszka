@@ -44,6 +44,8 @@ func (lfc *LineFmtChecker) Validate() bool {
 			}
 			lfc.Path = tmpPath
 			continue
+		} else if strings.Contains(filePath, `.exe`) {
+			continue //skip executables
 		}
 
 		//open file

@@ -30,6 +30,7 @@ func (lc *LicenseChecker) Validate() bool {
 			break
 		}
 		lc.issueCt++
+		lc.issues += `Issue: No LICENSE file`
 		return false
 	}
 
