@@ -53,9 +53,6 @@ To compile an executable that runs when
 4. Run "go build"
 5. You should now have a `val.exe` file to call in order to run the program
 
-Install instructions
---------------------
-
 Execution instructions
 ----------------------
 1. Build the program _(using above instructions)_
