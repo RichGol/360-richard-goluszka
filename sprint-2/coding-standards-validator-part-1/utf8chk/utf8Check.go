@@ -21,13 +21,14 @@ func (uc *UTF8Checker) Validate() bool {
 	//open directory and get files
 	files, err := ioutil.ReadDir(uc.Path)
 	if err != nil {
-		uc.msg += `Failed to open directory` + uc.Path + "\n"
+		uc.msg += `Failed to open directory:` + uc.Path + "\n"
 		return false
 	}
 
 	status := true
 	tmpPath := ``
 	filePath := ``
+	var lines []string
 	//step through each entry in uc.Path directory
 	for _, fi := range files {
 		filePath = uc.Path + string(os.PathSeparator) + fi.Name()
@@ -41,8 +42,8 @@ func (uc *UTF8Checker) Validate() bool {
 			}
 			uc.Path = tmpPath
 			continue
-		} else if strings.Contains(filePath, `.exe`) {
-			continue //skip executables
+		} else if strings.EqualFold(fi.Name(), `val.exe`) {
+			continue //skip executable
 		}
 
 		//open file
@@ -53,7 +54,8 @@ func (uc *UTF8Checker) Validate() bool {
 		}
 
 		//Check each line for UTF-8 validity
-		for lineNum, line := range strings.Split(string(content), "\n") {
+		lines = strings.Split(string(content), "\n")
+		for lineNum, line := range lines {
 			if !utf8.ValidString(line) {
 				uc.issues += fmt.Sprintf("Line %d in File: %s\tnon-utf8 text\n", lineNum, line)
 				uc.issueCt++

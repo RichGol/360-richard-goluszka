@@ -22,13 +22,12 @@ type validator interface {
 	GetIssueCt() int
 }
 
-//print a border of a given string with a given length
+//functions to print formatted border or message(s)
 func dispBorder(borderChar string, borderLength int) {
 	border := strings.Repeat(borderChar, borderLength)
 	fmt.Println(border)
 }
 
-//print centered messages based on given borderLength
 func dispMsg(msg string, borderLength int) {
 	padding := borderLength - len(msg)
 	dispMsg := strings.Repeat(` `, padding/2) + msg
@@ -41,17 +40,18 @@ func dispMsgs(borderLength int, messages ...string) {
 	}
 }
 
-//handle command-line arguments and then exit
+//handle command-line arguments
 func checkArgs(args []string) bool {
-	if strings.EqualFold(args[0], `help`) {
+	if strings.EqualFold(args[0], `help`) { //handle 'help' option
 		dispBorder(borderChar, borderLen)
 		dispMsgs(borderLen, `val.go -- validates code compliance with standards 1, 4, 6, and 13`,
+			`Enter absolute or relative path to main project directory when prompted`, ``,
 			"\u2018val\u2019 reports the number of errors and PASS/FAIL status",
 			"\u2018val detail\u2019 shows the files checked and any error locations",
 			"\u2018val help\u2019 displays this information again")
 		dispBorder(borderChar, borderLen)
 		os.Exit(0)
-	} else if strings.EqualFold(args[0], `detail`) {
+	} else if strings.EqualFold(args[0], `detail`) { //handle 'detail' option
 		dispBorder(borderChar, borderLen)
 		dispMsg(`Detail Mode: On`, borderLen)
 		return true
@@ -97,7 +97,7 @@ func main() {
 
 	//create a slice to hold coding standard descriptions (for UI)
 	valDescs := []string{
-		`Only files required to compile/execute, README.md, and LICENSE are included`,
+		`Only files required to compile/execute, README.md, and LICENSE are present`,
 		`The LICENSE file must specify a MIT, GNU GPL, or all rights reserved license`,
 		`Indentation is tab-based and only line feeds (\n) mark the end of lines`,
 		`All included files are UTF-8 compatible text files`,
@@ -114,10 +114,10 @@ func main() {
 		}
 		status += fmt.Sprint("\tIssue Count: ", unit.GetIssueCt())
 		dispMsgs(borderLen, valLabels[index], valDescs[index], ``)
-		if detailMode { //output for `detail` argument
+		if detailMode { //output details
 			fmt.Println(unit.GetMsg() + "\n")
 		}
-		if detailMode && unit.GetIssueCt() > 0 {
+		if detailMode && unit.GetIssueCt() > 0 { //output issues
 			fmt.Println(unit.GetIssues() + "\n")
 		}
 		dispMsg(status, borderLen)

@@ -25,12 +25,14 @@ func (lfc *LineFmtChecker) Validate() bool {
 		return false
 	}
 
-	//create regular expression to validate tab requirement
-	regExpr := regexp.MustCompile(`^(    )+[a-z|A-Z]+`)
+	//create regular expressions to test files
+	spaceExpr := regexp.MustCompile(`^(    )+[a-z|A-Z]+`)
+	lineExpr := regexp.MustCompile(`(\r|\r\n)$`)
 
 	status := true
 	tmpPath := ``
 	filePath := ``
+	var lines []string
 	//step through each entry in lfc.Path directory
 	for _, fi := range files {
 		filePath = lfc.Path + string(os.PathSeparator) + fi.Name()
@@ -44,8 +46,8 @@ func (lfc *LineFmtChecker) Validate() bool {
 			}
 			lfc.Path = tmpPath
 			continue
-		} else if strings.Contains(filePath, `.exe`) {
-			continue //skip executables
+		} else if strings.EqualFold(fi.Name(), `val.exe`) {
+			continue //skip executable
 		}
 
 		//open file
@@ -55,12 +57,13 @@ func (lfc *LineFmtChecker) Validate() bool {
 			return false
 		}
 
-		//check each line for "\r" and space-indenting
-		for lineNum, line := range strings.Split(string(content), "\n") {
-			if strings.Contains(line, "\r") {
+		//check the content of each line
+		lines = strings.Split(string(content), "\n")
+		for lineNum, line := range lines {
+			if lineExpr.MatchString(line) { //match against `\r` EOL character
 				lfc.issues += fmt.Sprintf("Issue: %s has wrong line feeds (line %d)\n", filePath,
 					lineNum+1)
-			} else if regExpr.MatchString(line) {
+			} else if spaceExpr.MatchString(line) { //match against space indentation
 				lfc.issues += fmt.Sprintf("Issue: %s has space-indentation (line %d)\n", filePath,
 					lineNum+1)
 			} else {

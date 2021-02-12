@@ -43,9 +43,11 @@ func (lc *LicenseChecker) Validate() bool {
 	lc.msg += `Checking: ` + lc.filePath + "\n"
 
 	//validate contents
-	str := string(bytes)
-	if strings.Contains(str, `GNU`) || strings.Contains(str, `MIT`) ||
-		strings.Contains(strings.ToUpper(str), `ALL RIGHTS RESERVED`) {
+	content := strings.ToUpper(string(bytes))
+	licMIT := `PERMISSION IS HEREBY GRANTED, FREE OF CHARGE,`
+	licReserved := `ALL RIGHTS RESERVED`
+	if strings.Contains(content, `GNU`) || strings.Contains(content, `MIT`) ||
+		strings.Contains(content, licMIT) || strings.Contains(content, licReserved) {
 		return true //file pass
 	}
 	lc.issueCt++
