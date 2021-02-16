@@ -1,7 +1,7 @@
 INFORMATIONAL
 =============
 Author: Rich Goluszka
-Last Updated: 2/12/2021
+Last Updated: 2/16/2021
 Project: Coding Standards Validator - Part 1
 Course: Applied Programming Languages (CPSC360-1) with Professor Eric Pogue
 
@@ -24,21 +24,16 @@ BUILD / EXECUTE / DEPENDENCY
 ============================
 Required files
 --------------
-directorychk directory  
-	-dirCheck.go  
-	-go.mod  
-licensechk directory  
-	-licenseCheck.go  
-	-go.mod  
-linefmtchk directory  
-	-lineFmtCheck.go  
-	-go.mod  
-utf8chk directory  
-	-utf8Check.go  
-	-go.mod  
-val directory  
-	-val.go  
-	-go.mod  
+coding-standards-validator-part-1
+	-val.go
+	-directorychk directory  
+		-dirCheck.go
+	-licensechk directory  
+		-licenseCheck.go  
+	-linefmtchk directory  
+		-lineFmtCheck.go  
+	-utf8chk directory  
+		-utf8Check.go  
 
 _Note: The GitHub repository https://github.com/RichGo/360-richard-goluszka contains all_  
 _required files plus README.md and LICENSE files. This repository is private and you will *NOT*_  
@@ -46,15 +41,12 @@ _be able to access it if you are not an invited collaborator._
 
 Build instructions
 ------------------
-To compile an executable that runs when
+To compile an executable:
 1. Open the command-line or terminal
-2. Navigate to this directory (../360-richard-goluszka/sprint-2/coding-standards-validator-part-1)
-3. Move to the val subdirectory (../coding-standards-validator-part-1/val)
-4. Run "go build"
-5. You should now have a `val.exe` file to call in order to run the program
-
-Install instructions
---------------------
+2. Navigate to .../go/src/360-richard-goluszka/sprint-2/coding-standards-validator-part-1
+3. Run `go install` within each subdirectory (directorychk / licensechk / linefmtchk / utf8chk)
+4. Run `go build` within the val subdirectory (.../coding-standards-validator-part-1/val)
+You should now have a `val.exe` executable to call in order to run the program
 
 Execution instructions
 ----------------------
