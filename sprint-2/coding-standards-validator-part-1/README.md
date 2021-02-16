@@ -35,7 +35,7 @@ coding-standards-validator-part-1
 	-utf8chk directory  
 		-utf8Check.go  
 
-_Note: The GitHub repository https://github.com/RichGo/360-richard-goluszka contains all_  
+_Note: The GitHub repository https://github.com/RichGol/360-richard-goluszka contains all_  
 _required files plus README.md and LICENSE files. This repository is private and you will *NOT*_  
 _be able to access it if you are not an invited collaborator._
 
