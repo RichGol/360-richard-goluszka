@@ -1,9 +1,9 @@
 INFORMATIONAL
 =============
-Author: Rich Goluszka
-Last Updated: 2/16/2021
-Project: Coding Standards Validator - Part 1
-Course: Applied Programming Languages (CPSC360-1) with Professor Eric Pogue
+Author: Rich Goluszka  
+Last Updated: 2/16/2021  
+Project: Coding Standards Validator - Part 1  
+Course: Applied Programming Languages (CPSC360-1) with Professor Eric Pogue  
 
 Contact
 -------
